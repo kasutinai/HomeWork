@@ -36,19 +36,14 @@ namespace Otus.Teaching.Linq.ATM.Console
                     foreach (var curAccount in curAccounts)
                         System.Console.WriteLine(curAccount.ToString());
 
-                    System.Console.WriteLine("\nUser accounts history");
+                    System.Console.WriteLine("\nUser operations history");
 
-                    foreach (var curAccount in curAccounts)
+                    var curHistories = atmManager.GetUserHistory(curUser.Id);
                     {
-                        System.Console.WriteLine($"\n{curAccount.ToString()}");
-                        System.Console.WriteLine("Account operations:");
-
-                        var curHistories = atmManager.GetAccountHistory(curAccount.Id);
-
                         if (curHistories.Count() > 0)
                         {
                             foreach (var curHistory in curHistories)
-                                System.Console.WriteLine(curHistory.ToString());
+                                System.Console.WriteLine(curHistory);
                         }
                         else { System.Console.WriteLine("None"); }
                     }
