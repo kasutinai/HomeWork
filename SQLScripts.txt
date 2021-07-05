@@ -1,0 +1,66 @@
+CREATE TABLE IF NOT EXISTS Student
+(
+    StudentId serial PRIMARY KEY,
+    FirstName character varying(50) NOT NULL,
+    LastName character varying(50) NOT NULL,
+    Phone character varying(15),
+    Birthdate date
+)
+WITH (
+    OIDS = FALSE
+);
+
+ALTER TABLE Student
+    OWNER to otus;
+
+CREATE TABLE IF NOT EXISTS Course
+(
+    CourseId smallserial PRIMARY KEY,
+    CourseName character varying(255) NOT NULL,
+    LessonsNumber smallint,
+    Description text
+)
+WITH (
+    OIDS = FALSE
+);
+
+ALTER TABLE Course
+    OWNER to otus;
+
+CREATE TABLE IF NOT EXISTS StudentsCourses
+(
+    StudentsCoursesId serial PRIMARY KEY,
+    StudentId integer NOT NULL REFERENCES Student (StudentId),
+    CourseId integer NOT NULL REFERENCES Course (Courseid),
+    costAmount numeric(10, 2),
+    paidAmount numeric(10, 2),
+    paid boolean    
+)
+WITH (
+    OIDS = FALSE
+);
+
+ALTER TABLE StudentsCourses
+    OWNER to otus;
+
+INSERT INTO course (coursename, lessonsnumber, description) VALUES
+('MS SQL Server Administration', 20, 'Basic'),
+('MS SQL Server Administration Professional', 30, 'Professional'),
+('Kotlin Backend Developer', 25, null),
+('Highload Architect', 20, null),
+('Agile Project Manager', null, 'Video lesson');
+
+INSERT INTO student (firstname, lastname, phone, birthdate) VALUES
+('Nurlan', 'Saburov', '+7(912)345-67-89', '1990-01-02'),
+('Tambi', 'Masaev', '+7(987)654-32-10', null),
+('Ilya', 'Makarov', '9123789456', null),
+('Emir', 'Kashokov', '+7(921)543-76-98', null),
+('Alexey', 'Scherbakov', null, '1987-06-05');
+
+INSERT INTO studentscourses (studentid, courseid, costamount, paidamount, paid) VALUES
+(1, 1, 10000.50, 10000, false),
+(2, 3, 15000, 15000, true),
+(1, 3, null, null, true),
+(4, 4, null, null, false),
+(5, 2, 20000, 0, false);
+
