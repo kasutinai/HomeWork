@@ -41,7 +41,7 @@ namespace DocReceiver
 
         private void IntervalElapsed(object sender, ElapsedEventArgs e)
         {
-            Dispose();
+            Unsubscribe();
             TimedOut?.Invoke();
         }
 
@@ -57,15 +57,18 @@ namespace DocReceiver
 
             if (i == _fileList.Count)
             {
-                Dispose();
+                Unsubscribe();
                 DocumentsReady?.Invoke();
             }
         }
 
-        private void Dispose()
+        private void Unsubscribe()
         {
-            _watcher.Dispose();
-            _timer.Dispose();
+            _watcher.Created -= CheckFiles;
+            _watcher.Deleted -= CheckFiles;
+            _watcher.Renamed -= CheckFiles;
+
+            _timer.Elapsed -= IntervalElapsed;
         }
     }
 }
