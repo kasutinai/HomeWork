@@ -5,7 +5,7 @@ using System.Timers;
 
 namespace DocReceiver
 {
-    public class DocumentsReceiver
+    public class DocumentsReceiver:IDisposable
     {
         public event Action DocumentsReady;
         public event Action TimedOut;
@@ -14,19 +14,26 @@ namespace DocReceiver
         private Timer _timer = new Timer();
 
         private string _targetDirectory;
+        private int _waitingInterval;
         private List<string> _fileList;
 
-        public void Start(string targetDirectory, int waitingInterval, List<string> fileList)
+        public DocumentsReceiver(string targetDirectory, int waitingInterval, List<string> fileList)
         {
-            var dir = new DirectoryInfo(targetDirectory);
-            if (!dir.Exists)
-                throw new DirectoryNotFoundException($"Directory {targetDirectory} not found");
-
             _targetDirectory = targetDirectory;
             _fileList = fileList;
-            _watcher = new FileSystemWatcher(targetDirectory);
+            _waitingInterval = waitingInterval;
+        }
 
-            _fileList.ForEach(file => _watcher.Filters.Add(file));
+        public void Start()
+        {
+            var dir = new DirectoryInfo(_targetDirectory);
+            if (!dir.Exists)
+                throw new DirectoryNotFoundException($"Directory {_targetDirectory} not found");
+
+            _watcher = new FileSystemWatcher(_targetDirectory);
+            //Filters is supported since .NET 5.0 and .NET Core	3.0 only
+            //It's not so important here to use the list of watchers instead
+            //_fileList.ForEach(file => _watcher.Filters.Add(file));
 
             _watcher.Created += CheckFiles;
             _watcher.Deleted += CheckFiles;
@@ -34,7 +41,7 @@ namespace DocReceiver
 
             _watcher.EnableRaisingEvents = true;
 
-            _timer.Interval = waitingInterval;
+            _timer.Interval = _waitingInterval;
             _timer.Elapsed += IntervalElapsed;
             _timer.Start();
         }
@@ -69,6 +76,12 @@ namespace DocReceiver
             _watcher.Renamed -= CheckFiles;
 
             _timer.Elapsed -= IntervalElapsed;
+        }
+
+        public void Dispose()
+        {
+            _watcher.Dispose();
+            _timer.Dispose();
         }
     }
 }

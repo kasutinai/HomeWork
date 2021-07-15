@@ -15,12 +15,12 @@ namespace DelegatesAndActions
                 string targetDirectory = "C:\\Passport";
                 List<string> fileList = new() { "Паспорт.jpg", "Заявление.txt", "Фото.jpg" };
                 int waitingInterval = 10000;
-                DocumentsReceiver doc = new();
+                DocumentsReceiver doc = new(targetDirectory, waitingInterval, fileList);
 
                 doc.DocumentsReady += Ready;
                 doc.TimedOut += TimedOut;
 
-                doc.Start(targetDirectory, waitingInterval, fileList);
+                doc.Start();
 
                 while (!_close)
                 {
