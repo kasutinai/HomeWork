@@ -13,9 +13,9 @@ namespace DocReceiver
         private FileSystemWatcher _watcher;
         private Timer _timer = new Timer();
 
-        private string _targetDirectory;
-        private int _waitingInterval;
-        private List<string> _fileList;
+        private readonly string _targetDirectory;
+        private readonly int _waitingInterval;
+        private readonly List<string> _fileList;
 
         public DocumentsReceiver(string targetDirectory, int waitingInterval, List<string> fileList)
         {
